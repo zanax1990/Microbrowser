@@ -13,7 +13,15 @@ Workflows run on pushes and pull requests targeting `main`, and can be triggered
 
 Use a clean Windows 10/11 x64 machine or a VM with WebView2 Runtime installed.
 
-- [ ] Open `Microbrowser.exe`; a single blank browser window appears.
+- [ ] Open `Microbrowser.exe`; a single blank **tab** appears.
+- [ ] Create three tabs with **+** or **Ctrl+T** and navigate each to a distinct website.
+- [ ] Switch tabs with the tab strip, **Ctrl+Tab**, and **Ctrl+Shift+Tab**; confirm each tab keeps its own URL and navigation state.
+- [ ] Close tabs with **x** or **Ctrl+W**; closing the last tab should produce a new blank tab.
+- [ ] Use **Private** or **Ctrl+Shift+N**; verify a separate titled window opens, does not share ordinary session cookies, and fails closed if private APIs are unavailable.
+- [ ] After closing all private windows, restart a new private window and check that private session cookies/history are gone (without expecting downloads or OS traces to disappear).
+- [ ] Download a small known file over HTTPS; verify **Downloads** / **Ctrl+J** shows filename, progress and completion.
+- [ ] Cancel a second download and verify it stops; verify **Open folder** opens the correct location.
+- [ ] With multiple tabs, toggle **Eco: ON**; confirm background pages remain navigable after being reactivated, and compare process-tree RAM/CPU against Eco: OFF.
 - [ ] Navigate to `https://example.com`; verify that the page renders.
 - [ ] Search for a non-sensitive phrase in the address bar; DuckDuckGo results load.
 - [ ] Check Back, Forward, Reload, and Go buttons.
@@ -37,7 +45,8 @@ Executable size is **not** RAM usage. WebView2 can launch multiple subprocesses 
 
 ## Known limitations
 
-- No custom ad/tracker blocker, incognito mode, bookmarks, tabs, or full-featured download manager.
+- No custom ad/tracker blocker, bookmarks, or permanent download history. Private mode is not anonymous browsing; downloaded files persist.
+- Eco mode uses WebView2's best-effort TrySuspend API; savings are not guaranteed, particularly for audio/video or active pages.
 - No independent security or privacy audit.
 - Some websites, login flows, pop-ups, or browser integrations may fail.
 - Unsigned binary downloads may trigger reputation-based security warnings.

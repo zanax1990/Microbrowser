@@ -11,15 +11,18 @@ Microbrowser is a small *browser application*, **not a new browser engine**. It 
 
 ## Features
 
-- One window, one web page; no tabs or extensions
-- Address bar with HTTP/HTTPS navigation
-- Search phrases sent to DuckDuckGo
+- Tabs: up to 32 open pages, with + / x buttons and keyboard shortcuts
+- Separate **Private** window using WebView2's built-in InPrivate controller/profile mode
+- **Eco: ON/OFF**: hide inactive tabs and request WebView2 to suspend them when Eco is enabled
+- Downloads panel with filename, progress, cancel, and open-folder controls
+- Address bar with HTTP/HTTPS navigation and DuckDuckGo search
 - Back, Forward, Reload, and Go controls
-- Basic keyboard shortcuts
-- Local browser profile stored on your computer
+- Local browser profile for ordinary windows
 - No application-specific analytics, accounts, sync, or advertising
 
-**Not included:** ad blocking, private/incognito mode, a full download manager UI, bookmarks, extension support, or a separate rendering engine. Websites themselves may show advertisements or collect data.
+**Not included:** ad blocking, bookmarks, extensions, full-featured download history, or a separate rendering engine. WebView2 handles the actual rendering and downloads.
+
+**Memory note:** Eco mode asks WebView2 to suspend hidden pages. Suspension is best-effort, may not work for some sites, and does not guarantee lower total RAM usage.
 
 ## Download for Windows
 
@@ -66,13 +69,27 @@ The build script downloads the official **Microsoft.Web.WebView2 SDK 1.0.4314.35
 | Focus the address bar | **Ctrl+L** |
 | Reload | **F5** or **Ctrl+R** |
 | Previous/next page | **Alt+Left** / **Alt+Right** or the toolbar buttons |
+| New/close tab | **Ctrl+T** / **Ctrl+W**, or **+** / **x** |
+| Next/previous tab | **Ctrl+Tab** / **Ctrl+Shift+Tab** |
+| Private window | **Ctrl+Shift+N** or **Private** |
+| Downloads panel | **Ctrl+J** or **Downloads** |
+| Eco mode | **Eco: ON / OFF** button |
 
-The app opens with a blank page. Searches use DuckDuckGo. The browser shell does not promise that every website or web feature will work.
+The app opens with a blank tab. New windows requested by websites may be opened as tabs, but complex popup/login flows are not guaranteed to work.
+
+### Private windows
+
+The **Private** button launches a separate Microbrowser process using WebView2's **InPrivate** mode. It is designed not to persist private browsing history, cookies, or local storage to the regular browsing profile. It does **not** provide anonymity, prevent network tracking, or remove downloaded files from disk. If the installed WebView2 Runtime does not support InPrivate controller options, the feature **fails closed** rather than silently using normal mode.
+
+### Downloads
+
+Open the **Downloads** panel to see progress, cancel a selected transfer, or open its destination folder. Downloads use WebView2's default destination. The app does not include pause/resume controls or a permanent download history; the list is kept only during the current process session.
 
 ## Privacy and security
 
 - The application source contains no dedicated analytics, ad injection, sync, or custom tracking endpoints.
-- Browsing history, cookies, and other WebView2 profile data can persist under `%LOCALAPPDATA%\Microbrowser\Profile`.
+- Normal-mode browsing history, cookies, and other WebView2 profile data can persist under `%LOCALAPPDATA%\Microbrowser\Profile`.
+- Private windows use WebView2 InPrivate mode, but downloaded files, network logs, OS records, and remote service records may still persist.
 - WebView2, the OS, search providers, and visited websites can make network requests independently of the application.
 - Camera, microphone, geolocation, and notification permission requests are denied by the app.
 - There is no independent security audit. **Do not assume the app is safer, more private, or lighter in RAM than Chrome.**

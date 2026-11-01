@@ -12,7 +12,19 @@ The application uses the installed Microsoft Edge WebView2 Runtime to load web p
 %LOCALAPPDATA%\Microbrowser\Profile
 ```
 
-This browser profile can persist between launches. There is currently no in-app "clear browsing data" control or private browsing mode. To clear the local profile, close Microbrowser completely and remove this folder in Windows. Doing so may sign you out of websites and erase stored site data.
+This browser profile can persist between launches. There is currently no in-app "clear browsing data" control. To clear the normal-mode local profile, close Microbrowser and related WebView2 processes, then remove this folder in Windows. Doing so may sign you out of websites and erase stored site data.
+
+## Private window mode
+
+The **Private** button (or **Ctrl+Shift+N**) starts a separate Microbrowser window/process using WebView2's built-in **InPrivate** controller options. WebView2 uses an off-the-record profile for that window: private history, cookies, and local storage are not intended to persist after the private session ends. The application does not implement any custom persistent private-history log.
+
+This does **not** guarantee that no traces exist. Downloads remain on disk; visited sites, ISPs, administrators, Windows, and Microsoft WebView2 may still retain information under their own policies. A private window is not a VPN, network anonymity tool, or guarantee of zero disk writes.
+
+If InPrivate cannot be initialized, Microbrowser displays an error rather than falling back to a normal browsing controller.
+
+## Downloads
+
+Downloads are handled by WebView2 using its default destination path. The downloads panel displays per-session progress and permits canceling a transfer; it does not keep its own permanent download list. Files downloaded while using Private mode remain on disk unless deleted by the user.
 
 ## Network requests
 

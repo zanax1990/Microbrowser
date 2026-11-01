@@ -12,7 +12,8 @@ The project has **not** undergone an independent security audit. Do not use it a
 - The SDK version used at build time is pinned in `tools/get-sdk.ps1`; updating the installed WebView2 Runtime is a separate process.
 - The compiled EXE is currently **unsigned**. Security warnings should be investigated, not automatically bypassed.
 - GitHub Actions compiles the Windows executable and provides a separate Windows Defender on-demand scan. A passing build or scan is **not** a malware-free or security-certified verdict.
-- The application retains local browser profile data by default; see [PRIVACY.md](PRIVACY.md).
+- Ordinary windows retain local browser profile data by default; private windows use WebView2 InPrivate mode. Private browsing is not anonymous and does not erase downloaded files; see [PRIVACY.md](PRIVACY.md).
+- Downloads are not automatically scanned by Microbrowser; rely on up-to-date OS protections and avoid untrusted files.
 
 ## Reporting a vulnerability
 
