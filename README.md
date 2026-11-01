@@ -30,3 +30,9 @@ The build downloads the official Microsoft WebView2 SDK and compiles on a GitHub
 
 ## Status
 Building on Windows is automated by GitHub Actions. The existence of an EXE does not prove every website works or that RAM use is lower than Chrome.
+
+## License
+
+The original Microbrowser source code is released under the [MIT License](LICENSE), copyright (c) 2026 zanax1990.
+
+This license does **not** cover Microsoft's WebView2 SDK, statically linked loader, or WebView2 Runtime. See [Third-party notices](THIRD_PARTY_NOTICES.md) and the applicable Microsoft license terms before redistributing compiled binaries.
