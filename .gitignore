@@ -1,0 +1,5 @@
+_deps/
+dist/
+*.obj
+*.pdb
+*.ilk
