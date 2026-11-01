@@ -1,22 +1,44 @@
-# Microbrowser testing
+# Testing Microbrowser
 
-## Automated (GitHub Actions)
-- Build on Windows Server 2022 with MSVC x64.
-- Confirm dist/Microbrowser.exe exists.
-- Compute SHA256 and upload executable as an artifact.
+This checklist distinguishes **automated build checks** from **manual browser behavior**. A successful compile is not a functional, performance, privacy, or security certification.
 
-## Manual tests required on Windows
-1. Open Microbrowser.exe and confirm an empty browser window opens.
-2. Enter https://example.com and verify the page is rendered.
-3. Enter a query ("light browser test") and verify DuckDuckGo results.
-4. Use Back, Forward, Reload, Go and Ctrl+L shortcuts.
-5. Confirm an https link opens in the same window.
-6. Confirm camera, microphone, location and notification permissions are denied.
-7. Restart and confirm whether history/cookies persist.
-8. Compare total memory usage of all WebView2 subprocesses with Chrome under the same pages; do not compare EXE size alone.
+## Automated checks on GitHub
+
+- **Build Windows Browser:** compiles the Windows x64 executable on a GitHub-hosted Windows runner, verifies its presence, prints its SHA-256 hash, and uploads it as a downloadable artifact.
+- **Security Check (Windows Defender):** independently rebuilds the EXE and attempts an on-demand scan with the Defender engine available on the runner. Runner protection settings and signature version are logged.
+
+Workflows run on pushes and pull requests targeting `main`, and can be triggered manually. Defender on-demand scanning is not a substitute for an external security review.
+
+## Manual Windows checks
+
+Use a clean Windows 10/11 x64 machine or a VM with WebView2 Runtime installed.
+
+- [ ] Open `Microbrowser.exe`; a single blank browser window appears.
+- [ ] Navigate to `https://example.com`; verify that the page renders.
+- [ ] Search for a non-sensitive phrase in the address bar; DuckDuckGo results load.
+- [ ] Check Back, Forward, Reload, and Go buttons.
+- [ ] Check **Ctrl+L**, **F5**, **Ctrl+R**, **Alt+Left**, and **Alt+Right**.
+- [ ] Open an HTTP and HTTPS link, including a link requesting a new window.
+- [ ] Test a broken URL, an unreachable site, and an invalid address.
+- [ ] Verify expected handling of camera, microphone, location, and notification requests.
+- [ ] Close and reopen; record whether the WebView2 profile retained expected cookies/history.
+- [ ] Check whether Windows, Chrome, or SmartScreen generates a security warning; record the exact wording.
+- [ ] Check that the app closes without leaving its main window or unintended processes open.
+
+## Measure memory fairly
+
+Executable size is **not** RAM usage. WebView2 can launch multiple subprocesses that must be counted.
+
+1. Reboot or use equivalent clean profiles.
+2. Open the **same page** in Microbrowser and in Chrome/Edge under comparable conditions.
+3. Use Windows Task Manager or Process Explorer to measure total memory used by each browser's process tree (including all WebView2 subprocesses).
+4. Record idle and loaded-page measurements, CPU use, runtime versions, page URL, and repeat counts.
+5. Compare multiple runs; do not advertise a memory advantage until independently reproduced.
 
 ## Known limitations
-- Some sites require browser functionality this small shell does not provide.
-- Uses Microsoft WebView2 Runtime on the local machine, so the program is not a separate web engine.
-- Does not implement a hardened URL/navigation safety policy or privacy auditing.
-- A successful compile is not a functional or security validation.
+
+- No custom ad/tracker blocker, incognito mode, bookmarks, tabs, or full-featured download manager.
+- No independent security or privacy audit.
+- Some websites, login flows, pop-ups, or browser integrations may fail.
+- Unsigned binary downloads may trigger reputation-based security warnings.
+- Tests in GitHub Actions do **not** launch the GUI to verify site rendering.

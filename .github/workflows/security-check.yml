@@ -2,8 +2,9 @@ name: Security Check (Windows Defender)
 
 on:
   push:
-    paths:
-      - '.github/workflows/security-check.yml'
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -12,18 +13,21 @@ permissions:
 jobs:
   security:
     runs-on: windows-2022
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Configure MSVC x64
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
+
       - name: Rebuild from source
         shell: cmd
         run: call build.cmd
-      - name: Inspect Windows Defender status and scan executable
+
+      - name: Run on-demand Windows Defender scan
         shell: pwsh
         run: |
           $exe = (Resolve-Path "dist/Microbrowser.exe").Path
@@ -33,14 +37,15 @@ jobs:
           Write-Host "RealTimeProtectionEnabled: $($status.RealTimeProtectionEnabled)"
           Write-Host "AntivirusSignatureVersion: $($status.AntivirusSignatureVersion)"
           if (!$status.AntivirusEnabled -or !$status.AMServiceEnabled) {
-            throw "Defender is not available on this runner. No antivirus clean verdict can be claimed."
+            throw "Windows Defender is unavailable; scan result cannot be verified."
           }
-          $before = @(Get-MpThreatDetection -ErrorAction SilentlyContinue)
+          $scanStarted = Get-Date
           Start-MpScan -ScanType CustomScan -ScanPath $exe -ErrorAction Stop
-          $after = @(Get-MpThreatDetection -ErrorAction SilentlyContinue)
-          $new = @($after | Where-Object { $_.InitialDetectionTime -ge (Get-Date).AddMinutes(-10) })
-          if ($new.Count -gt 0) {
-            $new | Format-List | Out-String | Write-Host
-            throw "Potential malware detection observed. Check Defender."
+          $detections = @(Get-MpThreatDetection -ErrorAction SilentlyContinue |
+            Where-Object { $_.InitialDetectionTime -ge $scanStarted.AddMinutes(-1) })
+          if ($detections.Count -gt 0) {
+            $detections | Format-List | Out-String | Write-Host
+            throw "Windows Defender reported a recent detection; investigate the result."
           }
-          Write-Host "Windows Defender custom scan completed without a detected threat."
+          Write-Host "Defender on-demand scan completed with no new detections reported."
+          Write-Host "This is not a comprehensive security audit."

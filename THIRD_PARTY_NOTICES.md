@@ -1,21 +1,21 @@
 # Third-party components and licenses
 
-Microbrowser's original application source is licensed under the [MIT License](LICENSE).
+The **original Microbrowser application source code** is distributed under the repository's [MIT License](LICENSE). That license does not grant rights to Microsoft's separately licensed components.
 
 ## Microsoft Edge WebView2
 
-Microbrowser uses Microsoft's WebView2 APIs and requires the **Microsoft Edge WebView2 Runtime** installed on Windows.
+Microbrowser uses the **Microsoft Edge WebView2 Runtime** to render web content. The Runtime must be installed separately on the Windows device. This application does not bundle its own browser rendering engine.
 
-The build downloads the Microsoft.Web.WebView2 SDK from NuGet and statically links its WebView2LoaderStatic library into the generated executable. Microsoft components are **not** covered by Microbrowser's MIT License. Their use and redistribution are governed by Microsoft's applicable license terms.
+The build downloads the **Microsoft.Web.WebView2 SDK 1.0.4314.35** from Microsoft's NuGet package and links `WebView2LoaderStatic.lib` into the Windows executable. The embedded Microsoft loader and Microsoft's Runtime are governed by **Microsoft's applicable terms**, not by the Microbrowser MIT License.
 
-- [Microsoft.Web.WebView2 NuGet package](https://www.nuget.org/packages/Microsoft.Web.WebView2/)
-- [WebView2 distribution guidance](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution)
-- [WebView2 SDK license information](https://www.nuget.org/packages/Microsoft.Web.WebView2/#license-info)
+Official sources:
+- [Microsoft.Web.WebView2 SDK package and license](https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.4314.35)
+- [Microsoft: distribute your WebView2 app and Runtime](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution)
+- [Microsoft: Evergreen vs. fixed-version Runtime](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/evergreen-vs-fixed-version)
+- [Official WebView2 Runtime download](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
 
-The repository does not commit the SDK package or the WebView2 Runtime. Build scripts fetch the SDK when compiling. Before distributing binaries, review the Microsoft terms applicable to the SDK/loader and Runtime.
+The repository does not check in the Microsoft SDK or Runtime. The static loader is **included in compiled builds**, so review Microsoft's terms before redistributing those executables. Microbrowser does not imply Microsoft affiliation or endorsement.
 
-## GitHub Actions dependencies
+## GitHub Actions
 
-The GitHub Actions workflows use third-party actions for checkout, MSVC setup and artifact upload. Those actions remain subject to their own respective licenses and are not part of the Microbrowser source-code license.
-
-No affiliation with or endorsement by Microsoft is implied.
+The workflows use third-party actions such as `actions/checkout`, `actions/upload-artifact`, and `ilammy/msvc-dev-cmd`. Those projects have their own licenses and maintenance policies. Their source and licenses can be reviewed at their respective GitHub repositories.
