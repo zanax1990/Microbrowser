@@ -1,0 +1,46 @@
+name: Security Check (Windows Defender)
+
+on:
+  push:
+    paths:
+      - '.github/workflows/security-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Configure MSVC x64
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Rebuild from source
+        shell: cmd
+        run: call build.cmd
+      - name: Inspect Windows Defender status and scan executable
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path "dist/Microbrowser.exe").Path
+          $status = Get-MpComputerStatus
+          Write-Host "AntivirusEnabled: $($status.AntivirusEnabled)"
+          Write-Host "AMServiceEnabled: $($status.AMServiceEnabled)"
+          Write-Host "RealTimeProtectionEnabled: $($status.RealTimeProtectionEnabled)"
+          Write-Host "AntivirusSignatureVersion: $($status.AntivirusSignatureVersion)"
+          if (!$status.AntivirusEnabled -or !$status.AMServiceEnabled) {
+            throw "Defender is not available on this runner. No antivirus clean verdict can be claimed."
+          }
+          $before = @(Get-MpThreatDetection -ErrorAction SilentlyContinue)
+          Start-MpScan -ScanType CustomScan -ScanPath $exe -ErrorAction Stop
+          $after = @(Get-MpThreatDetection -ErrorAction SilentlyContinue)
+          $new = @($after | Where-Object { $_.InitialDetectionTime -ge (Get-Date).AddMinutes(-10) })
+          if ($new.Count -gt 0) {
+            $new | Format-List | Out-String | Write-Host
+            throw "Potential malware detection observed. Check Defender."
+          }
+          Write-Host "Windows Defender custom scan completed without a detected threat."
