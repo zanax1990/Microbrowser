@@ -183,7 +183,7 @@ void ActivateTab(const std::shared_ptr<Tab>& tab) {
         PutVisibility(entry, entry == tab && !windowMinimized);
 
     if (addressBox)
-        SetWindowTextW(addressBox, tab->url == L"about:blank" ? L"" : tab->url);
+        SetWindowTextW(addressBox, tab->url == L"about:blank" ? L"" : tab->url.c_str());
     UpdateControls();
     Layout();
     if (mainWindow) {
@@ -348,7 +348,7 @@ void RefreshTabUrl(const std::shared_ptr<Tab>& tab) {
         CoTaskMemFree(text);
     }
     if (activeTab == tab && addressBox && GetFocus() != addressBox)
-        SetWindowTextW(addressBox, tab->url == L"about:blank" ? L"" : tab->url);
+        SetWindowTextW(addressBox, tab->url == L"about:blank" ? L"" : tab->url.c_str());
     UpdateControls();
 }
 
@@ -612,7 +612,7 @@ LRESULT CALLBACK EditProc(HWND control, UINT message, WPARAM wp, LPARAM lp, UINT
     }
     if (message == WM_KEYDOWN && wp == VK_ESCAPE) {
         if (activeTab) SetWindowTextW(control,
-            activeTab->url == L"about:blank" ? L"" : activeTab->url);
+            activeTab->url == L"about:blank" ? L"" : activeTab->url.c_str());
         if (activeTab && activeTab->controller)
             activeTab->controller->MoveFocus(COREWEBVIEW2_MOVE_FOCUS_REASON_PROGRAMMATIC);
         return 0;
